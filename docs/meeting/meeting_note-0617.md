@@ -2,7 +2,7 @@
 
 ## System Architecture
 
-![](images/arch.png)
+![](../images/arch.png)
 
 ## Discord-Bot-Integration
 
