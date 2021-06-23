@@ -1,0 +1,3 @@
+[submodule "introduction_bot"]
+	path = introduction_bot
+	url = git@github.com:Taiwan-Academy/Introduction-bot.git

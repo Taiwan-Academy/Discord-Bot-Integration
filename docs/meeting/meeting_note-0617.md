@@ -2,13 +2,7 @@
 
 ## System Architecture
 
-```graphviz
-graph{
-    "Discord-Bot-Integration" -- "Introduction-bot"
-    "Discord-Bot-Integration" -- "Score-System"
-    "Discord" -- "Discord-Bot-Integration"
-}
-```
+![](../images/arch.png)
 
 ## Discord-Bot-Integration
 

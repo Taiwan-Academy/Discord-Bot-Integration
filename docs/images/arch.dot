@@ -1,0 +1,5 @@
+graph{
+    "Discord-Bot-Integration" -- "Introduction-bot"
+    "Discord-Bot-Integration" -- "Score-System"
+    "Discord" -- "Discord-Bot-Integration"
+}
