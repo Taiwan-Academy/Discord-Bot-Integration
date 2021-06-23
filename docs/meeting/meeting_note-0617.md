@@ -124,8 +124,8 @@ TODO
 * [ ] Database schema
     * Tables? [Chloe]
 * [ ] Git submodule among repositories [Luis]
-* [ ] Infrastructure to connect with Database [Brian]
-* [ ] Infrastructure to connect connect with Discord API [Brian]
+* [x] Infrastructure to connect with Database [Brian]
+* [x] Infrastructure to connect connect with Discord API [Brian]
 * [ ] Settings / Infrastructure with workflow
     * Setup project
     * CI / CD integrate with Repl.it [Low priority][Brian]
