@@ -1,8 +1,0 @@
-#DB schema
-#User Table
-Key : User ID/User Name
-Optional: Institution abbr/Program Degree/Program Name/Program Start Year/Program End Year/LinkedIn/Create Dt/Last Update Time/Last Update User/User Leave Server Dt
-
-#School Table
-Key:ID/縮寫
-Optional: School Name/ Region
