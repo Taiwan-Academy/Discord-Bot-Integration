@@ -123,7 +123,7 @@ TODO
 
 * [ ] Database schema
     * Tables? [Chloe]
-* [ ] Git submodule among repositories [Luis]
+* [x] Git submodule among repositories [Luis]
 * [x] Infrastructure to connect with Database [Brian]
 * [x] Infrastructure to connect connect with Discord API [Brian]
 * [ ] Settings / Infrastructure with workflow
