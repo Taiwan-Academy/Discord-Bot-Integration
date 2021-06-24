@@ -1,5 +1,6 @@
 import discord
 import DB
+import os
 from keep_alive import keep_alive
 from discord.ext import commands
 
@@ -51,30 +52,30 @@ async def on_member_join(member):
 
 # Self-defined function
 # -------------------
-async def add_role(member: discord.Member, role_ID, role_name=None):
-    # Use role_id or role_name to find the registered role
-    role = discord.utils.get(member.guild.roles, id = role_ID)
-    # role = discord.utils.get(member.guild.roles, name = role_name)
+# async def add_role(member: discord.Member, role_ID, role_name=None):
+#     # Use role_id or role_name to find the registered role
+#     role = discord.utils.get(member.guild.roles, id = role_ID)
+#     # role = discord.utils.get(member.guild.roles, name = role_name)
 
-    await member.add_roles(verifiedRole)
+#     await member.add_roles(verifiedRole)
 
-    # KEY should use asyncio.sleep, other will sleep the whole program
-    await asyncio.sleep(5)
+#     # KEY should use asyncio.sleep, other will sleep the whole program
+#     await asyncio.sleep(5)
 
-    role_name = role.name if role_name == None else role_name
-    await member.send("You've been already added {} role".format(role_name))
+#     role_name = role.name if role_name == None else role_name
+#     await member.send("You've been already added {} role".format(role_name))
 
 
-@commands.has_role(role_name)
-async def remove_role(member: discord.Member,role_ID, role_name=None):
-    role = discord.utils.get(member.guild.roles, name = role_name)
-    await member.remove_roles(role)
+# @commands.has_role(role_name)
+# async def remove_role(member: discord.Member,role_ID, role_name=None):
+#     role = discord.utils.get(member.guild.roles, name = role_name)
+#     await member.remove_roles(role)
 
-    # KEY should use asyncio.sleep, other will sleep the whole program
-    await asyncio.sleep(5)
+#     # KEY should use asyncio.sleep, other will sleep the whole program
+#     await asyncio.sleep(5)
 
-    role_name = role.name if role_name == None else role_name
-    await member.send("You've been already deprived {} role".format(role_name))
+#     role_name = role.name if role_name == None else role_name
+#     await member.send("You've been already deprived {} role".format(role_name))
 
 
 if __name__ =='__main__':

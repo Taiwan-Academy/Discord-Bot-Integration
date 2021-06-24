@@ -1,13 +1,12 @@
 import sqlite3
 
-def connect_DB(db_name = 'data.sqlite') -> sqlite3.db, sqlite3.cursor:
+def connect_DB(db_name = 'data.sqlite'):
     try:
-    db = sqlite3.connect(db_name)
-    cur = db.cursor()
-    print('Successfully connect to DB')
-    return db, cur
-
-    except Exception e:
+        db = sqlite3.connect(db_name)
+        cur = db.cursor()
+        print('Successfully connect to DB')
+        return db, cur
+    except Exception as e:
         print("Fail connection to DB")
         raise e
 
