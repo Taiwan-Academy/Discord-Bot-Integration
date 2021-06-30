@@ -1,47 +1,42 @@
 import discord
 from os import environ
 
-_intents = discord.Intents.default()
-_intents.members = True
+from Singleton import Singleton
+
+__intents = discord.Intents.default()
+__intents.members = True
+
 _token = environ['DISCORD_TOKEN']
-_client = discord.Client(intents=_intents)
+_client = discord.Client(intents=__intents)
 
-class _API_Base(type):
-    __instance = None
+class API(metaclass=Singleton):
     _bots = None
-    def __call__(cls, *args, **kwargs):
-        print("API call")
-        if cls.__instance is None:
-            print("API Init")
-            cls.__instance = super(_API_Base, cls).__call__(*args, **kwargs)
-        return cls.__instance
-
-class API(metaclass=_API_Base):
     def __init__(self, bots=None) -> None:
         if not (bots is None):
-            print("API bots")
-            _API_Base._bots = bots
+            print("API bots") # FIXME:
+            self._bots = bots
 
 ## Other methods defines below
     def print(self, msg): # FIXME: Test
         print("API print {}".format(msg))
     
     def run(self):
-        print("API run")
+        print("API run") # FIXME:
         _client.run(_token)
 
 ## Client events
 @_client.event
 async def on_ready():
-    print("Client ready")
-    if not (_API_Base._bots is None):
-        for bot in _API_Base._bots:
+    print("Client ready") # FIXME:
+    api = API()
+    if not (api._bots is None):
+        for bot in api._bots:
             bot.on_ready()
 
 @_client.event
 async def on_message(message):
-    print("Client message")
-    if not (_API_Base._bots is None):
-        for bot in _API_Base._bots:
+    print("Client message") # FIXME:
+    api = API()
+    if not (api._bots is None):
+        for bot in api._bots:
             bot.on_message(message)
-
