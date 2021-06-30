@@ -1,3 +1,3 @@
-[submodule "introduction_bot"]
-	path = introduction_bot
-	url = git@github.com:Taiwan-Academy/Introduction-bot.git
+[submodule "IntroductionBot"]
+	path = IntroductionBot
+	url = https://github.com/taiwan-academy/Introduction-bot.git

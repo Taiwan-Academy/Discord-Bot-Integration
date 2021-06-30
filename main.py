@@ -3,10 +3,10 @@ from threading import Thread
 
 from API import API
 from Bot1 import Bot1
-from Bot2 import Bot2
+from IntroductionBot import IntroductionBot
 
 if __name__ == '__main__':
-    bots = [Bot1(), Bot2()]
+    bots = [Bot1(), IntroductionBot()]
     api = API(bots)
     api2 = API()
 
