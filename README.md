@@ -9,7 +9,3 @@ Planned Features:
 1. Introduction 
 2. Score_system
 3. Referer System
-
-
-
-
