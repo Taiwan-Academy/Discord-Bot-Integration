@@ -132,7 +132,7 @@ TODO
 
 ### Intro bot
 
-* [ ] Infrastructure with Bot-Integration [Luis]
+* [x] Infrastructure with Bot-Integration [Luis]
 * [ ] Welcome page contents [Later]
 * [ ] Question / Reply contents [Later]
 * [ ] Survey how to configure Questions / Reply [Brian, Chloe]
