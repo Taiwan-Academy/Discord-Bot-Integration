@@ -11,5 +11,5 @@ if __name__ == '__main__':
     # db Usage: db.create(), db.add() ..... 
 
     # run
-    keep_alive()
+    # keep_alive()
     api.run()
