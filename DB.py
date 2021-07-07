@@ -14,53 +14,97 @@ class DB(metaclass=Singleton):
         except Exception as e:
             print("Fail connection to DB")
             raise e
+    
+    def create_university(self, univ_info: list):
+        try:
+            univ_info = [univ_info] if not isinstance(univ_info, list) else univ_info
+            query = """INSERT INTO UNIVERSITY
+                            (univ_abbrev, univ_name, region) 
+                            VALUES (?, ?, ?);"""
 
-    def create_table(self):
-        # Template NEED FIX
-        # SQL query for create table
-        query = '''
-            CREATE TABLE USERS(
-                user_id varchar(255),
-                user_name varchar(255),
-                tokens int,
-                primary key(user_id)
-            )
-        '''
-        self.cur.execute(query)
-        self.db.commit()
-
-
-    def insert_data(self, tablename, **kwargs):
-        key_args = ','.join(kwargs.keys())
-        val_args = ",'".join(kwargs.values())
-        # NEED FIX: if different datatype, value may need to ''
-        exec = "INSERT INTO {}({}) values('{}'); ".format(tablename,key_args,val_args)
-        # print(exec)
-        self.cur.execute(exec)
-        self.db.commit()
-
-    def select_first(self,tablename):
-        # NEED FIX:
-        exec = "Select * from {} ".format(tablename)
-        res = self.cur.execute(exec).fetchone()
-        if res:
-            res = res[0]
-        return res
-
-
-    # def add_token(db, cur,user_id, tokens):
-    #     # select current left tokens
-    #     exec = "Select tokens from users where user_id = '{}'".format(user_id)
-    #     res = cur.execute(exec).fetchone()
-    #     if res:
-    #         res = res[0]
-    #     update_exec = "Update users set tokens={} where user_id ='{}'".format(res+int(tokens), user_id)
+            self.cur.executemany(query, univ_info)
+            self.db.commit()
+            print("Successfully create University")
+        except sqlite3.Error as error:
+            print("Failed to insert Python variable into sqlite table", error)
         
-    #     try:
-    #         cur.execute(update_exec)
-    #         db.commit()
-    #         return "Successfully Update"
-    #     except Exception as e: 
-    #         return e
 
-    #     # then add
+    def delete_university(self, univ_id):
+        try:
+            query = 'DELETE from UNIVERSITY WHERE univ_id = ?'; 
+            self.cur.executemany(query, univ_id)
+            self.db.commit()
+            print("Successfully DELETE University")
+                    
+        except sqlite3.Error as error:
+            print("Failed to DELETE Python variable from sqlite table", error)
+
+    def delete_user(self, user_id):
+        try:
+            query = 'DELETE from USER WHERE user_id = ?'; 
+            self.cur.executemany(query, user_id)
+            self.db.commit()
+            print("Successfully DELETE USER")
+        except sqlite3.Error as error:
+            print("Failed to DELETE Python variable from sqlite table", error)
+
+
+
+    def create_user(self, user_id:str, user_name:str):
+        try:
+            query = """INSERT INTO USER
+                            (user_id, user_name) 
+                            VALUES (?, ?);"""
+
+            data_tuple = (user_id, user_name)
+            self.cur.execute(query, data_tuple)
+            self.db.commit()
+            print("Successfully create User")
+        except sqlite3.Error as error:
+            print("Failed to insert Python variable into sqlite table", error)
+
+    def update_user_info(self, user_id:str, updated_info: dict): 
+        # updated_info should be a dictionary contain the updated attribute and value
+        # NOTE: the key should match the attributes name
+        # {
+        #     'prog_name' : "Computer Science",
+        #     'prog_deg' : "Master",
+        #     'univ_abbrev' : 'UCI'
+        # }
+
+        try:
+            cols = ', '.join('{}=:{}'.format(col, col) for col in updated_info.keys())
+            updated_info['user_id'] = user_id
+            query = """UPDATE USER
+                        SET {}
+                        WHERE USER_ID=:user_id;""".format(cols)
+            # print(query)
+            self.cur.execute(query, updated_info)
+            self.db.commit()
+            print("Successfully Update User Info : {}".format(updated_info.keys()))
+
+        except sqlite3.Error as error:
+            print("Failed to update Python variable into sqlite table", error)
+
+    def select_all(self,tablename):
+        try:
+            # NOTE: table names cannot be parametrized. May be Vulnerable to Injection?
+            exec = "select * from {};".format(tablename)
+            res = self.cur.execute(exec).fetchall()
+            return res
+            
+        except sqlite3.Error as error:
+            print("Failed to select from table", error)
+        
+    def select_where_eql(self, tablename, condition: dict):
+        try:
+            eql_condition = ' and '.join('{}=:{}'.format(col, col) for col in condition.keys())
+            condition['tablename'] = tablename
+            # NOTE: table names cannot be parametrized. May be Vulnerable to Injection?
+            exec = "Select * from {} where {}".format(tablename,eql_condition)
+            res = self.cur.execute(exec, condition).fetchall()
+            return res
+            
+        except sqlite3.Error as error:
+            print("Failed to select from table", error)
+
