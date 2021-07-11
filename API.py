@@ -12,18 +12,24 @@ _client = discord.Client(intents=__intents)
 class API(metaclass=Singleton):
     _bots = None
     def __init__(self, bots=None) -> None:
+        print('API init',bots)
         if not (bots is None):
             self._bots = bots
 
-## Other methods defines below
+    ## Other methods defines below
     def run(self):
         _client.run(_token)
+
+    async def client_await():
+        await _client.wait_for('message')
+
 
 ## Client events
 @_client.event
 async def on_ready():
     api = API()
     if not (api._bots is None):
+        print('We have logged in as {0.user}'.format(_client))
         for bot in api._bots:
             await bot.on_ready()
 
@@ -33,3 +39,12 @@ async def on_message(message):
     if not (api._bots is None):
         for bot in api._bots:
             await bot.on_message(message)
+
+@_client.event
+async def on_member_join(member):
+    api = API()
+    if not (api._bots is None):
+        for bot in api._bots:
+            await bot.on_member_join(member)
+        print()
+
