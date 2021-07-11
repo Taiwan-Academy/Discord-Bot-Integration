@@ -25,11 +25,11 @@ async def on_ready():
     api = API()
     if not (api._bots is None):
         for bot in api._bots:
-            bot.on_ready()
+            await bot.on_ready()
 
 @_client.event
 async def on_message(message):
     api = API()
     if not (api._bots is None):
         for bot in api._bots:
-            bot.on_message(message)
+            await bot.on_message(message)
