@@ -31,20 +31,20 @@ async def on_ready():
     if not (api._bots is None):
         print('We have logged in as {0.user}'.format(_client))
         for bot in api._bots:
-            bot.on_ready()
+            await bot.on_ready()
 
 @_client.event
 async def on_message(message):
     api = API()
     if not (api._bots is None):
         for bot in api._bots:
-            bot.on_message(message)
+            await bot.on_message(message)
 
 @_client.event
 async def on_member_join(member):
     api = API()
     if not (api._bots is None):
         for bot in api._bots:
-            bot.on_member_join(member)
+            await bot.on_member_join(member)
         print()
 
