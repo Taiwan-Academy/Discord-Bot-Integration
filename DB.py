@@ -1,110 +1,127 @@
-import sqlite3
+from sqlalchemy.sql.expression import update
+from sqlalchemy.sql.functions import user
 from Singleton import Singleton
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
+from models import University, User, Base
 
 class DB(metaclass=Singleton):
     def __init__(self):
-        # Since, by far we plan to have only one database
-        # Not providing flexibility to access different db
-        db_name = 'data.sqlite'
+        self.engine = create_engine('sqlite:///data.sqlite')
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
+    def add_universities(self, university_list: list):
+        ''' university_list : list, each element should contain
+        {
+            univ_abbrev : **Required**,
+            univ_name : ,
+            region : ,
+        }
+
+        '''
+
+        if not isinstance(university_list, list): university_list = [university_list]
+
+        for univ in university_list:
+            try:
+                new_univ = University(univ)
+                self.session.add(new_univ)
+                self.session.commit()
+                print("Successfully Create University with {}".format(univ))
+
+            except Exception as E:
+                self.session.rollback()
+                print(E)
+
+    def add_users(self, user_list: list):
+        ''' user_list should be list of user, each user should at least contain
+        {
+            user_id :  **Required**
+            user_name :
+            univ_abbrev
+            prog_deg
+            prog_name
+            prog_start_yr
+            prog_end_yr
+            created_dt: **Default value: datetime.now*
+            last_updated_dt
+            last_updated_user
+            leave_server_dt
+            user_status: **Default value: Non-verified**
+        }
+        '''
+        if not isinstance(user_list, list): user_list = [user_list]
+
+        for user in user_list:
+            try:
+                new_user = User(user)
+                self.session.add(new_user)
+                self.session.commit()
+                print("Successfully Create User with {}".format(user))
+            except Exception as E:
+                self.session.rollback()
+                print(E)
+
+    def get_user_by_ID(self, user_id) -> User:
+        # Will return User object, can directly access its attributes ex: user.user_name
+        user = self.session.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            print("Cannot find this user")
+            return None
+        else:
+            return user
+
+    def get_univ_by_abbrev(self,univ_abbrev) -> University:
+        univ = self.session.query(University).filter(University.univ_abbrev == univ_abbrev).first()
+        if not univ:
+            print("Cannot find this university")
+            return None
+        else:
+            return univ
+
+    def update_user_by_ID(self, user_id: str, user_info: dict):
         try:
-            self.db = sqlite3.connect(db_name)
-            self.cur = self.db.cursor()
-            print('Successfully connect to DB')
+            res = self.session.query(User)\
+                        .filter(User.user_id == user_id)\
+                        .update(user_info, synchronize_session=False)
+            self.session.commit()
+            # KEY, IF user_id wrong will not find the user, And res will be 0
+            if res == 0:
+                print("Warning: Such update wasn't executed, please check whether user_id is correct")
         except Exception as e:
-            print("Fail connection to DB")
-            raise e
+            self.session.rollback()
+            print("**Failed Update**")
+            print(e)
+
+    def update_univ_by_abbrev(self, univ_abbrev: str, univ_info:dict):
+        try:
+            res = self.session.query(University)\
+                        .filter(University.univ_abbrev == univ_abbrev)\
+                        .update(univ_info, synchronize_session=False)
+            self.session.commit()
+            # KEY, IF user_id wrong will not find the user, And res will be 0
+            if res == 0:
+                print("Warning: Such update wasn't executed, please check whether univ_abbrev is correct")
+        except Exception as e:
+            self.session.rollback()
+            print("**Failed Update**")
+            print(e)
+
+    def get_university_alums(self, univ_abbrev: str):
+        univ = self.session.query(University).filter(University.univ_abbrev == univ_abbrev).first()
+        if not univ:
+            print("Cannot Find this University, Please check abbreviation again, or whether this university already created")
+            return None
+        else:
+            return univ.get_alums()
+
+
+        
+
     
-    def create_university(self, univ_info: list):
-        try:
-            univ_info = [univ_info] if not isinstance(univ_info, list) else univ_info
-            query = """INSERT INTO UNIVERSITY
-                            (univ_abbrev, univ_name, region) 
-                            VALUES (?, ?, ?);"""
-
-            self.cur.executemany(query, univ_info)
-            self.db.commit()
-            print("Successfully create University")
-        except sqlite3.Error as error:
-            print("Failed to insert Python variable into sqlite table", error)
-        
-
-    def delete_university(self, univ_id):
-        try:
-            query = 'DELETE from UNIVERSITY WHERE univ_id = ?'; 
-            self.cur.executemany(query, univ_id)
-            self.db.commit()
-            print("Successfully DELETE University")
-                    
-        except sqlite3.Error as error:
-            print("Failed to DELETE Python variable from sqlite table", error)
-
-    def delete_user(self, user_id):
-        try:
-            query = 'DELETE from USER WHERE user_id = ?'; 
-            self.cur.executemany(query, user_id)
-            self.db.commit()
-            print("Successfully DELETE USER")
-        except sqlite3.Error as error:
-            print("Failed to DELETE Python variable from sqlite table", error)
 
 
 
-    def create_user(self, user_id:str, user_name:str):
-        try:
-            query = """INSERT INTO USER
-                            (user_id, user_name) 
-                            VALUES (?, ?);"""
-
-            data_tuple = (user_id, user_name)
-            self.cur.execute(query, data_tuple)
-            self.db.commit()
-            print("Successfully create User")
-        except sqlite3.Error as error:
-            print("Failed to insert Python variable into sqlite table", error)
-
-    def update_user_info(self, user_id:str, updated_info: dict): 
-        # updated_info should be a dictionary contain the updated attribute and value
-        # NOTE: the key should match the attributes name
-        # {
-        #     'prog_name' : "Computer Science",
-        #     'prog_deg' : "Master",
-        #     'univ_abbrev' : 'UCI'
-        # }
-
-        try:
-            cols = ', '.join('{}=:{}'.format(col, col) for col in updated_info.keys())
-            updated_info['user_id'] = user_id
-            query = """UPDATE USER
-                        SET {}
-                        WHERE USER_ID=:user_id;""".format(cols)
-            # print(query)
-            self.cur.execute(query, updated_info)
-            self.db.commit()
-            print("Successfully Update User Info : {}".format(updated_info.keys()))
-
-        except sqlite3.Error as error:
-            print("Failed to update Python variable into sqlite table", error)
-
-    def select_all(self,tablename):
-        try:
-            # NOTE: table names cannot be parametrized. May be Vulnerable to Injection?
-            exec = "select * from {};".format(tablename)
-            res = self.cur.execute(exec).fetchall()
-            return res
-            
-        except sqlite3.Error as error:
-            print("Failed to select from table", error)
-        
-    def select_where_eql(self, tablename, condition: dict):
-        try:
-            eql_condition = ' and '.join('{}=:{}'.format(col, col) for col in condition.keys())
-            condition['tablename'] = tablename
-            # NOTE: table names cannot be parametrized. May be Vulnerable to Injection?
-            exec = "Select * from {} where {}".format(tablename,eql_condition)
-            res = self.cur.execute(exec, condition).fetchall()
-            return res
-            
-        except sqlite3.Error as error:
-            print("Failed to select from table", error)
 
