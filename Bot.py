@@ -1,4 +1,7 @@
 class Bot:
+    def __init__(self) -> None:
+        print(self)
+
     async def on_ready(self):
         print("Bot ready") # FIXME:
 
