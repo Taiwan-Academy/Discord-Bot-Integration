@@ -1,66 +1,127 @@
-import sqlite3
+from sqlalchemy.sql.expression import update
+from sqlalchemy.sql.functions import user
 from Singleton import Singleton
-
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
+from models import University, User, Base
 
 class DB(metaclass=Singleton):
     def __init__(self):
-        # Since, by far we plan to have only one database
-        # Not providing flexibility to access different db
-        db_name = 'data.sqlite'
-        try:
-            self.db = sqlite3.connect(db_name)
-            self.cur = self.db.cursor()
-            print('Successfully connect to DB')
-        except Exception as e:
-            print("Fail connection to DB")
-            raise e
+        self.engine = create_engine('sqlite:///data.sqlite')
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
 
-    def create_table(self):
-        # Template NEED FIX
-        # SQL query for create table
-        query = '''
-            CREATE TABLE USERS(
-                user_id varchar(255),
-                user_name varchar(255),
-                tokens int,
-                primary key(user_id)
-            )
+    def add_universities(self, university_list: list):
+        ''' university_list : list, each element should contain
+        {
+            univ_abbrev : **Required**,
+            univ_name : ,
+            region : ,
+        }
+
         '''
-        self.cur.execute(query)
-        self.db.commit()
+
+        if not isinstance(university_list, list): university_list = [university_list]
+
+        for univ in university_list:
+            try:
+                new_univ = University(univ)
+                self.session.add(new_univ)
+                self.session.commit()
+                print("Successfully Create University with {}".format(univ))
+
+            except Exception as E:
+                self.session.rollback()
+                print(E)
+
+    def add_users(self, user_list: list):
+        ''' user_list should be list of user, each user should at least contain
+        {
+            user_id :  **Required**
+            user_name :
+            univ_abbrev
+            prog_deg
+            prog_name
+            prog_start_yr
+            prog_end_yr
+            created_dt: **Default value: datetime.now*
+            last_updated_dt
+            last_updated_user
+            leave_server_dt
+            user_status: **Default value: Non-verified**
+        }
+        '''
+        if not isinstance(user_list, list): user_list = [user_list]
+
+        for user in user_list:
+            try:
+                new_user = User(user)
+                self.session.add(new_user)
+                self.session.commit()
+                print("Successfully Create User with {}".format(user))
+            except Exception as E:
+                self.session.rollback()
+                print(E)
+
+    def get_user_by_ID(self, user_id) -> User:
+        # Will return User object, can directly access its attributes ex: user.user_name
+        user = self.session.query(User).filter(User.user_id == user_id).first()
+        if not user:
+            print("Cannot find this user")
+            return None
+        else:
+            return user
+
+    def get_univ_by_abbrev(self,univ_abbrev) -> University:
+        univ = self.session.query(University).filter(University.univ_abbrev == univ_abbrev).first()
+        if not univ:
+            print("Cannot find this university")
+            return None
+        else:
+            return univ
+
+    def update_user_by_ID(self, user_id: str, user_info: dict):
+        try:
+            res = self.session.query(User)\
+                        .filter(User.user_id == user_id)\
+                        .update(user_info, synchronize_session=False)
+            self.session.commit()
+            # KEY, IF user_id wrong will not find the user, And res will be 0
+            if res == 0:
+                print("Warning: Such update wasn't executed, please check whether user_id is correct")
+        except Exception as e:
+            self.session.rollback()
+            print("**Failed Update**")
+            print(e)
+
+    def update_univ_by_abbrev(self, univ_abbrev: str, univ_info:dict):
+        try:
+            res = self.session.query(University)\
+                        .filter(University.univ_abbrev == univ_abbrev)\
+                        .update(univ_info, synchronize_session=False)
+            self.session.commit()
+            # KEY, IF user_id wrong will not find the user, And res will be 0
+            if res == 0:
+                print("Warning: Such update wasn't executed, please check whether univ_abbrev is correct")
+        except Exception as e:
+            self.session.rollback()
+            print("**Failed Update**")
+            print(e)
+
+    def get_university_alums(self, univ_abbrev: str):
+        univ = self.session.query(University).filter(University.univ_abbrev == univ_abbrev).first()
+        if not univ:
+            print("Cannot Find this University, Please check abbreviation again, or whether this university already created")
+            return None
+        else:
+            return univ.get_alums()
 
 
-    def insert_data(self, tablename, **kwargs):
-        key_args = ','.join(kwargs.keys())
-        val_args = ",'".join(kwargs.values())
-        # NEED FIX: if different datatype, value may need to ''
-        exec = "INSERT INTO {}({}) values('{}'); ".format(tablename,key_args,val_args)
-        # print(exec)
-        self.cur.execute(exec)
-        self.db.commit()
-
-    def select_first(self,tablename):
-        # NEED FIX:
-        exec = "Select * from {} ".format(tablename)
-        res = self.cur.execute(exec).fetchone()
-        if res:
-            res = res[0]
-        return res
-
-
-    # def add_token(db, cur,user_id, tokens):
-    #     # select current left tokens
-    #     exec = "Select tokens from users where user_id = '{}'".format(user_id)
-    #     res = cur.execute(exec).fetchone()
-    #     if res:
-    #         res = res[0]
-    #     update_exec = "Update users set tokens={} where user_id ='{}'".format(res+int(tokens), user_id)
         
-    #     try:
-    #         cur.execute(update_exec)
-    #         db.commit()
-    #         return "Successfully Update"
-    #     except Exception as e: 
-    #         return e
 
-    #     # then add
+    
+
+
+
+
