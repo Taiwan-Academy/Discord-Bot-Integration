@@ -12,12 +12,12 @@ _client = discord.Client(intents=__intents)
 class API(metaclass=Singleton):
     _bots = None
     def __init__(self, bots=None) -> None:
-        print('API init',bots)
         if not (bots is None):
             self._bots = bots
 
     ## Other methods defines below
     def run(self):
+        print("Run API")
         _client.run(_token)
 
     async def client_await():
