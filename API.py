@@ -38,7 +38,10 @@ async def on_message(message):
     api = API()
     if not (api._bots is None):
         for bot in api._bots:
-            await bot.on_message(message)
+            if message.author.id == _client.user.id:
+                await bot.on_bot_message(message)
+            else:
+                await bot.on_message(message)
 
 @_client.event
 async def on_member_join(member):
@@ -46,5 +49,4 @@ async def on_member_join(member):
     if not (api._bots is None):
         for bot in api._bots:
             await bot.on_member_join(member)
-        print()
 
