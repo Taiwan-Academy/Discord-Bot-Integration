@@ -30,13 +30,14 @@ class University(Base):
 
 class User(Base):
     __tablename__ = 'user'
-    user_id = Column(String, primary_key= True)
+    user_id = Column(Integer, primary_key= True)
     user_name =Column(String)
     univ_abbrev =Column(String, ForeignKey(University.univ_abbrev))
     prog_deg =Column(String)
     prog_name =Column(String)
     prog_start_yr = Column(Date)
     prog_end_yr = Column(Date)
+    linkedin_url = Column(String)
     created_dt = Column(DateTime,default=datetime.now(), nullable=False)
     last_updated_dt= Column(DateTime)
     last_updated_user =Column(String)
@@ -53,6 +54,7 @@ class User(Base):
         self.prog_name = user['prog_name'] if 'prog_name' in user else None
         self.prog_start_yr = datetime.strptime(user['prog_start_yr'], '%Y-%m-%d') if 'prog_start_yr' in user else None
         self.prog_end_yr = datetime.strptime(user['prog_end_yr'], '%Y-%m-%d') if 'prog_end_yr' in user else None
+        self.linkedin_url = user['linkedin_url'] if 'linkedin_url' in user else None
         self.created_dt = datetime.strptime(user['created_dt'], '%Y-%m-%d') if 'created_dt' in user else None
         self.last_updated_dt = datetime.strptime(user['last_updated_dt'], '%Y-%m-%d') if 'last_updated_dt' in user else None
         self.last_updated_user = user['last_updated_user'] if 'last_updated_user' in user else None
