@@ -81,7 +81,7 @@ class DB(metaclass=Singleton):
         else:
             return univ
 
-    def update_user_by_ID(self, user_id: str, user_info: dict):
+    def update_user_by_ID(self, user_id: int, user_info: dict):
         try:
             res = self.session.query(User)\
                         .filter(User.user_id == user_id)\
@@ -90,6 +90,7 @@ class DB(metaclass=Singleton):
             # KEY, IF user_id wrong will not find the user, And res will be 0
             if res == 0:
                 print("Warning: Such update wasn't executed, please check whether user_id is correct")
+            return res
         except Exception as e:
             self.session.rollback()
             print("**Failed Update**")

@@ -23,6 +23,11 @@ class API(metaclass=Singleton):
     async def client_await():
         await _client.wait_for('message')
 
+    async def add_role(member: discord.Member, role_id: int):
+        verifiedRole = discord.utils.get(member.guild.roles, id = role_id)
+        await member.add_roles(verifiedRole)
+
+
 
 ## Client events
 @_client.event
