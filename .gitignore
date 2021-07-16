@@ -3,3 +3,5 @@
 .devcontainer/
 __pycache__
 storage/
+data.sqlite
+dump.json
