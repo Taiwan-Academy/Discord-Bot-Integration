@@ -33,7 +33,7 @@ class API(metaclass=Singleton):
             guild = _client.get_guild(guild)
             member = guild.get_member(author.id)
             verifiedRole = discord.utils.get(guild.roles, id = role_id)
-            
+
         if member:            
             await member.add_roles(verifiedRole)
         else:
@@ -44,12 +44,12 @@ class API(metaclass=Singleton):
             return str(user.id) == str(msg_user_id)
 
         try:
-            reaction, user = await _client.wait_for('reaction_add', timeout=60.0, check=check)
+            reaction, user = await _client.wait_for('reaction_add', timeout=180.0, check=check)
             return reaction
         except asyncio.TimeoutError:
-            return "Time out"
+            return '🎓'
         else:
-            return "Null"
+            return '🎓'
 
 
 
