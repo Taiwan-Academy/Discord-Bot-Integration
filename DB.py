@@ -12,6 +12,12 @@ class DB(metaclass=Singleton):
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
 
+    def get_all_university(self) -> list:
+        # NOTE: will return a list of Univ object. 
+        # list_of_some_attr = list(map(lambda x:x.univ_abbrev, univ_list))
+        all_univ = self.session.query(University).all()
+        return all_univ
+
     def add_universities(self, university_list: list):
         ''' university_list : list, each element should contain
         {

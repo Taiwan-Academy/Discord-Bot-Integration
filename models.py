@@ -33,6 +33,7 @@ class User(Base):
     user_id = Column(Integer, primary_key= True)
     user_name =Column(String)
     univ_abbrev =Column(String, ForeignKey(University.univ_abbrev))
+    field_of_study =Column(String)
     prog_deg =Column(String)
     prog_name =Column(String)
     prog_start_yr = Column(Date)
@@ -50,6 +51,7 @@ class User(Base):
         self.user_id = user['user_id'] if 'user_id' in user else None
         self.user_name = user['user_name'] if 'user_name' in user else None
         self.univ_abbrev = user['univ_abbrev'] if 'univ_abbrev' in user else None
+        self.field_of_study = user['field_of_study'] if 'field_of_study' in user else None
         self.prog_deg = user['prog_deg'] if 'prog_deg' in user else None
         self.prog_name = user['prog_name'] if 'prog_name' in user else None
         self.prog_start_yr = datetime.strptime(user['prog_start_yr'], '%Y-%m-%d') if 'prog_start_yr' in user else None
