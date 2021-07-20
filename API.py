@@ -5,6 +5,7 @@ from Singleton import Singleton
 
 __intents = discord.Intents.default()
 __intents.members = True
+__intents.presences = True
 
 _token = environ['DISCORD_TOKEN']
 _client = discord.Client(intents=__intents)
@@ -70,7 +71,7 @@ async def on_message(message):
     api = API()
     if not (api._bots is None):
         for bot in api._bots:
-            if message.author.id == _client.user.id:
+            if message.author.bot:
                 await bot.on_bot_message(message)
             else:
                 await bot.on_message(message)
@@ -82,3 +83,9 @@ async def on_member_join(member):
         for bot in api._bots:
             await bot.on_member_join(member)
 
+@_client.event
+async def on_member_update(before, after):
+    api = API()
+    if not (api._bots is None):
+        for bot in api._bots:
+            await bot.on_member_update(before, after)

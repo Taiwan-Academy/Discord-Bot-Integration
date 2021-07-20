@@ -11,6 +11,10 @@ class Bot:
     async def on_bot_message(self, message):
         pass
 
+    # Virtual function when member update status
+    async def on_member_update(self, before, after):
+        pass
+
     # member join abstract function
     async def on_member_join(self, member):
         pass
