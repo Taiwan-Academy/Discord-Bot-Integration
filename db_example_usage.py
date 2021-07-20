@@ -3,8 +3,33 @@ from DB import DB
 
 if __name__ =='__main__':
     db = DB()
+    univ_list = db.get_all_university()
+    univ_abbrev_list = list(map(lambda x:x.univ_abbrev.upper(), univ_list))
+    univ_abbrev_list.append("OTEHR")
+
+    print(univ_abbrev_list)
+
+'''
     # Following implement some handy function at first
     # if need some advanced query or operation can direct access db.session to operate
+    univ_list=[]
+    univ_list.append({
+        'univ_abbrev':"NYU",
+        'univ_name':"New York University",
+        'region':'New York'
+    })
+    univ_list.append({
+        'univ_abbrev':"CMU",
+        'univ_name':"Carneige Mellon University",
+        'region':'Pittsburgh'
+    })
+    univ_list.append({
+        'univ_abbrev':"UCI",
+        'univ_name':"UC Irvine",
+        'region':'Irvine'
+    })
+    # add_universities will read a list of univ dict, univ_abbrev is required
+    db.add_universities(univ_list) 
 
     # Get all allumni in the same university, KEY: if university not created yet, will be error
     alums = db.get_university_alums('CMU')
@@ -62,7 +87,7 @@ if __name__ =='__main__':
     print(user.user_name)
     print(user.univ_abbrev)
     print(user.user_status)
-
+'''
 
 
 
