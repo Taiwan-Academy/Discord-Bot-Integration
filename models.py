@@ -58,9 +58,9 @@ class User(Base):
         self.prog_end_yr = datetime.strptime(user['prog_end_yr'], '%Y-%m-%d') if 'prog_end_yr' in user else None
         self.linkedin_url = user['linkedin_url'] if 'linkedin_url' in user else None
         self.created_dt = datetime.strptime(user['created_dt'], '%Y-%m-%d') if 'created_dt' in user else None
-        self.last_updated_dt = datetime.strptime(user['last_updated_dt'], '%Y-%m-%d') if 'last_updated_dt' in user else None
+        self.last_updated_dt = datetime.strptime(user['last_updated_dt'], '%Y-%m-%d %H:%M:%S') if 'last_updated_dt' in user else None
         self.last_updated_user = user['last_updated_user'] if 'last_updated_user' in user else None
-        self.leave_server_dt = datetime.strptime(user['leave_server_dt'], '%Y-%m-%d') if 'leave_server_dt' in user else None
+        self.leave_server_dt = datetime.strptime(user['leave_server_dt'], '%Y-%m-%d %H:%M:%S') if 'leave_server_dt' in user else None
         self.user_status = user['user_status'] if 'user_status' in user else None
 
 
